@@ -2,350 +2,1202 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pharmacos | Skincare, Beauty & Personal Care UAE</title>
-    <meta name="description" content="Your everyday destination for skincare, beauty, hair care, personal care and health essentials in the UAE.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cambridge Opticians - Management System</title>
     
-    <meta property="og:title" content="Pharmacos | Premium Online Pharmacy UAE">
-    <meta property="og:description" content="Skincare, Beauty & Personal Care. Fast delivery across Dubai, Abu Dhabi, and all Emirates.">
-    <meta property="og:type" content="website">
+    <!-- External Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="style.css">
-    
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Pharmacos",
-      "url": "https://www.pharmacos.store",
-      "logo": "assets/logo.png",
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "telephone": "+971-50-000-0000",
-        "contactType": "customer service",
-        "areaServed": "AE",
-        "availableLanguage": "English"
-      }
-    }
+    <!-- Custom Configuration & Styles -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: '#0A192F',
+                        navyhover: '#112240',
+                        cambridge: '#1E3A8A'
+                    }
+                }
+            }
+        }
     </script>
+    <style>
+        /* Base typography & Scrollbar */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #F3F4F6; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Print Styles */
+        @media print {
+            body { background: white !important; }
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            .print-container { width: 100%; margin: 0; padding: 20px; }
+            @page { margin: 0.5cm; }
+        }
+        
+        .print-only { display: none; }
+        
+        /* UI Utilities */
+        .glass-card { background: white; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #e5e7eb; }
+        .input-field { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; outline: none; transition: border-color 0.2s; }
+        .input-field:focus { border-color: #1E3A8A; ring: 2px solid #1E3A8A; }
+        .btn-primary { background: #1E3A8A; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; font-weight: 500; transition: background 0.2s; }
+        .btn-primary:hover { background: #1e40af; }
+        .btn-danger { background: #dc2626; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; font-weight: 500; transition: background 0.2s; }
+        .btn-danger:hover { background: #b91c1c; }
+        .btn-outline { border: 1px solid #d1d5db; background: white; padding: 0.5rem 1rem; border-radius: 0.375rem; font-weight: 500; transition: background 0.2s; }
+        .btn-outline:hover { background: #f3f4f6; }
+        .nav-item.active { background-color: #112240; border-left: 4px solid #3b82f6; }
+        
+        /* Prescription Grid */
+        .rx-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.5rem; text-align: center; align-items: center; }
+        .rx-header { font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; }
+    </style>
 </head>
-<body>
+<body class="text-gray-800 h-screen flex flex-col overflow-hidden">
 
-    <header class="navbar glass">
-        <div class="nav-container">
-            <button class="mobile-menu-btn" aria-label="Open Menu">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
-            </button>
-            
-            <a href="#" class="brand-logo">
-                <img src="https://via.placeholder.com/150x40/0f172a/ffffff?text=PHARMACOS" alt="Pharmacos Logo" id="official-logo">
-            </a>
+    <!-- PRINT VIEW (Hidden by default) -->
+    <div id="printArea" class="print-only print-container"></div>
 
-            <nav class="desktop-nav">
-                <a href="#hero">Home</a>
-                <a href="#shop">Shop</a>
-                <a href="#shop" onclick="filterByCategory('Skincare')">Skincare</a>
-                <a href="#shop" onclick="filterByCategory('Hair Care')">Hair Care</a>
-                <a href="#shop" onclick="filterByCategory('Beauty')">Beauty</a>
-                <a href="#shop" onclick="filterByCategory('Health')">Health</a>
-            </nav>
-
-            <div class="nav-actions">
-                <div class="search-bar hidden-mobile">
-                    <input type="text" id="header-search" placeholder="Search products..." aria-label="Search">
-                    <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-                </div>
-                <button class="icon-btn hidden-mobile" aria-label="Account">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                </button>
-                <button class="icon-btn" aria-label="Wishlist">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-                <button class="icon-btn cart-btn" aria-label="Cart" onclick="toggleCart()">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 20a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm7 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-9.8-2h11.6L20 6H6L4 2H1v2h2l3.6 15z"/></svg>
-                    <span class="cart-badge" id="cart-count">0</span>
-                </button>
-            </div>
+    <!-- MAIN APP WRAPPER (Hidden when printing) -->
+    <div class="no-print flex-1 flex flex-col h-full">
+        <!-- Demo Banner -->
+        <div class="bg-red-600 text-white text-center text-xs py-1.5 font-bold tracking-wide shadow-md z-50 relative">
+            <i class="fas fa-exclamation-triangle mr-2"></i> DEMO MODE — Sample Data Only. Not Connected to a Production Database. Data is stored locally in your browser.
         </div>
-        <div class="mobile-search-container hidden-desktop">
-            <input type="text" id="mobile-search" placeholder="Search face wash, CeraVe..." aria-label="Search">
-        </div>
-    </header>
 
-    <div class="mobile-nav-drawer" id="mobile-nav">
-        <div class="mobile-nav-header">
-            <img src="https://via.placeholder.com/120x32/0f172a/ffffff?text=PHARMACOS" alt="Pharmacos">
-            <button class="close-btn" id="close-mobile-nav">&times;</button>
-        </div>
-        <div class="mobile-nav-links">
-            <a href="#hero" class="mobile-link">Home</a>
-            <a href="#shop" class="mobile-link" onclick="filterByCategory('All')">Shop All</a>
-            <a href="#shop" class="mobile-link" onclick="filterByCategory('Skincare')">Skincare</a>
-            <a href="#shop" class="mobile-link" onclick="filterByCategory('Hair Care')">Hair Care</a>
-            <a href="#shop" class="mobile-link" onclick="filterByCategory('Personal Care')">Personal Care</a>
-            <a href="#shop" class="mobile-link" onclick="filterByCategory('Mother & Baby')">Mother & Baby</a>
-            <a href="#shop" class="mobile-link" onclick="filterByCategory('Health')">Health & Pharmacy</a>
-        </div>
-    </div>
-    <div class="overlay" id="mobile-overlay"></div>
-
-    <main>
-        <section id="hero" class="hero-section">
-            <div class="hero-content">
-                <h1 class="hero-title">HEALTH, BEAUTY &<br><span>EVERYDAY CARE</span></h1>
-                <p class="hero-subtitle">Your everyday destination for skincare, beauty, hair care, personal care and health essentials in the UAE.</p>
-                <div class="hero-ctas">
-                    <a href="#shop" class="btn btn-primary">SHOP NOW</a>
-                    <a href="#shop" onclick="filterByCategory('Skincare')" class="btn btn-secondary">EXPLORE SKINCARE</a>
-                </div>
-                <div class="trust-badges">
-                    <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> UAE Delivery</span>
-                    <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Secure Checkout</span>
-                    <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Authentic Products</span>
-                </div>
-            </div>
-            <div class="hero-visual">
-                <div class="floating-card card-1">
-                    <img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=300&q=80" alt="Premium Skincare" loading="lazy">
-                </div>
-                <div class="floating-card card-2">
-                    <img src="https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=250&q=80" alt="Daily Care" loading="lazy">
-                </div>
-            </div>
-        </section>
-
-        <section id="categories" class="section-padding">
-            <h2 class="section-title">SHOP BY CATEGORY</h2>
-            <div class="category-scroll">
-                <div class="category-card" onclick="filterByCategory('Skincare')">
-                    <div class="cat-img skincare-bg"></div>
-                    <h3>Skincare</h3>
-                </div>
-                <div class="category-card" onclick="filterByCategory('Hair Care')">
-                    <div class="cat-img haircare-bg"></div>
-                    <h3>Hair Care</h3>
-                </div>
-                <div class="category-card" onclick="filterByCategory('Beauty')">
-                    <div class="cat-img beauty-bg"></div>
-                    <h3>Beauty</h3>
-                </div>
-                <div class="category-card" onclick="filterByCategory('Personal Care')">
-                    <div class="cat-img personal-bg"></div>
-                    <h3>Personal Care</h3>
-                </div>
-                <div class="category-card" onclick="filterByCategory('Mother & Baby')">
-                    <div class="cat-img baby-bg"></div>
-                    <h3>Mother & Baby</h3>
-                </div>
-                <div class="category-card" onclick="filterByCategory('Health')">
-                    <div class="cat-img health-bg"></div>
-                    <h3>Health</h3>
-                </div>
-            </div>
-        </section>
-
-        <section id="launch" class="launch-section">
-            <div class="launch-container">
-                <div class="launch-image-wrapper">
-                    <span class="badge badge-red">NEW LAUNCH</span>
-                    <img src="https://images.unsplash.com/photo-1556228720-192a6af4e865?auto=format&fit=crop&w=600&q=80" alt="New Face Wash Demo Image" id="launch-product-image">
-                </div>
-                <div class="launch-details">
-                    <h2>NEW FACE WASH LAUNCH</h2>
-                    <p class="launch-sub">Clean. Fresh. Everyday confidence.</p>
-                    <p class="launch-desc">Experience our latest dermatologist-tested daily cleanser. Formulated to gently remove impurities while maintaining your skin's natural moisture barrier. Suitable for all skin types.</p>
-                    
-                    <ul class="feature-list">
-                        <li>✓ Gentle Daily Formula</li>
-                        <li>✓ Non-comedogenic</li>
-                        <li>✓ Fragrance-free</li>
-                    </ul>
-
-                    <div class="launch-price">
-                        <span class="price-aed">AED 85.00</span>
-                        <span class="size-label">200ml</span>
-                    </div>
-
-                    <div class="launch-actions">
-                        <div class="quantity-selector">
-                            <button class="qty-btn" onclick="updateLaunchQty(-1)">-</button>
-                            <input type="number" id="launch-qty" value="1" min="1" readonly>
-                            <button class="qty-btn" onclick="updateLaunchQty(1)">+</button>
+        <div class="flex flex-1 overflow-hidden">
+            <!-- SIDEBAR -->
+            <aside class="w-64 bg-navy text-white flex flex-col shadow-xl z-20">
+                <div class="p-5 border-b border-gray-700">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-cambridge text-xl font-bold">
+                            <i class="fas fa-glasses"></i>
                         </div>
-                        <button class="btn btn-primary launch-add-btn" onclick="addLaunchToCart()">Add to Cart</button>
+                        <div>
+                            <h1 class="font-bold text-lg leading-tight tracking-wide" id="sidebar-biz-name">CAMBRIDGE<br>OPTICIANS</h1>
+                            <p class="text-xs text-gray-400 mt-1" id="sidebar-biz-address">Shakeel Plaza, Peshawar</p>
+                        </div>
                     </div>
-                    <button class="btn btn-whatsapp" onclick="enquireWhatsApp('New Face Wash', document.getElementById('launch-qty').value)">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-                        Enquire on WhatsApp
-                    </button>
                 </div>
-            </div>
-        </section>
+                
+                <nav class="flex-1 overflow-y-auto py-4 custom-scrollbar">
+                    <ul class="space-y-1">
+                        <li><a href="#" onclick="showSection('dashboard', this)" class="nav-item active flex items-center px-6 py-3 text-sm text-gray-300 hover:text-white hover:bg-navyhover transition"><i class="fas fa-home w-6"></i> Dashboard</a></li>
+                        <li><a href="#" onclick="showSection('customers', this)" class="nav-item flex items-center px-6 py-3 text-sm text-gray-300 hover:text-white hover:bg-navyhover transition"><i class="fas fa-users w-6"></i> Customers</a></li>
+                        <li><a href="#" onclick="showSection('prescriptions', this)" class="nav-item flex items-center px-6 py-3 text-sm text-gray-300 hover:text-white hover:bg-navyhover transition"><i class="fas fa-file-medical w-6"></i> Prescriptions</a></li>
+                        <li><a href="#" onclick="showSection('orders', this)" class="nav-item flex items-center px-6 py-3 text-sm text-gray-300 hover:text-white hover:bg-navyhover transition"><i class="fas fa-clipboard-list w-6"></i> Optical Orders</a></li>
+                        <li><a href="#" onclick="showSection('pos', this)" class="nav-item flex items-center px-6 py-3 text-sm text-gray-300 hover:text-white hover:bg-navyhover transition"><i class="fas fa-cash-register w-6"></i> Sales / POS</a></li>
+                        <li><a href="#" onclick="showSection('inventory', this)" class="nav-item flex items-center px-6 py-3 text-sm text-gray-300 hover:text-white hover:bg-navyhover transition"><i class="fas fa-boxes w-6"></i> Inventory</a></li>
+                        <li><a href="#" onclick="showSection('suppliers', this)" class="nav-item flex items-center px-6 py-3 text-sm text-gray-300 hover:text-white hover:bg-navyhover transition"><i class="fas fa-truck w-6"></i> Suppliers</a></li>
+                        <li><a href="#" onclick="showSection('expenses', this)" class="nav-item flex items-center px-6 py-3 text-sm text-gray-300 hover:text-white hover:bg-navyhover transition"><i class="fas fa-file-invoice-dollar w-6"></i> Expenses</a></li>
+                        <li><a href="#" onclick="showSection('cash', this)" class="nav-item flex items-center px-6 py-3 text-sm text-gray-300 hover:text-white hover:bg-navyhover transition"><i class="fas fa-wallet w-6"></i> Cash Register</a></li>
+                        <li><a href="#" onclick="showSection('reports', this)" class="nav-item flex items-center px-6 py-3 text-sm text-gray-300 hover:text-white hover:bg-navyhover transition"><i class="fas fa-chart-line w-6"></i> Sales Reports</a></li>
+                        <li><a href="#" onclick="showSection('performance', this)" class="nav-item flex items-center px-6 py-3 text-sm text-gray-300 hover:text-white hover:bg-navyhover transition"><i class="fas fa-user-tie w-6"></i> Employee Perf.</a></li>
+                        <li><a href="#" onclick="showSection('settings', this)" class="nav-item flex items-center px-6 py-3 text-sm text-gray-300 hover:text-white hover:bg-navyhover transition"><i class="fas fa-cog w-6"></i> Settings</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="p-4 border-t border-gray-700 text-center">
+                    <button onclick="resetDemoData()" class="text-xs text-gray-400 hover:text-red-400 transition"><i class="fas fa-trash-alt mr-1"></i> Reset Demo Data</button>
+                </div>
+            </aside>
 
-        <section id="shop" class="section-padding bg-light">
-            <div class="shop-header">
-                <h2 class="section-title">TRENDING PRODUCTS</h2>
-                <div class="filter-status" id="filter-status"></div>
-            </div>
+            <!-- MAIN CONTENT -->
+            <main class="flex-1 flex flex-col h-full bg-gray-100 overflow-hidden relative">
+                <!-- TOP HEADER -->
+                <header class="bg-white shadow-sm px-8 py-4 flex justify-between items-center z-10">
+                    <h2 class="text-xl font-semibold text-gray-800" id="page-title">Dashboard</h2>
+                    <div class="flex items-center gap-6">
+                        <div class="text-sm text-gray-500 font-medium" id="current-datetime"></div>
+                        <div class="flex items-center gap-2 border-l pl-6">
+                            <div class="w-8 h-8 rounded-full bg-cambridge text-white flex items-center justify-center font-bold">M</div>
+                            <span class="text-sm font-medium text-gray-700">Manager User</span>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- SCROLLABLE CONTENT AREA -->
+                <div class="flex-1 overflow-y-auto p-8 custom-scrollbar relative" id="main-content">
+                    
+                    <!-- 1. DASHBOARD -->
+                    <div id="sec-dashboard" class="app-section">
+                        <!-- Quick Actions -->
+                        <div class="flex flex-wrap gap-3 mb-8">
+                            <button onclick="showSection('customers'); openModal('customerModal')" class="btn-primary flex items-center gap-2"><i class="fas fa-user-plus"></i> Register Customer</button>
+                            <button onclick="showSection('prescriptions')" class="btn-primary flex items-center gap-2"><i class="fas fa-notes-medical"></i> New Prescription</button>
+                            <button onclick="showSection('orders')" class="btn-primary flex items-center gap-2"><i class="fas fa-plus-circle"></i> New Optical Order</button>
+                            <button onclick="showSection('pos')" class="btn-primary flex items-center gap-2 bg-green-600 hover:bg-green-700 border-none"><i class="fas fa-shopping-cart"></i> Record Sale</button>
+                            <button onclick="showSection('expenses')" class="btn-outline flex items-center gap-2"><i class="fas fa-minus-circle"></i> Record Expense</button>
+                        </div>
+
+                        <!-- Stats Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                            <div class="glass-card p-5 border-l-4 border-blue-500">
+                                <p class="text-sm font-medium text-gray-500 mb-1">Today's Sales</p>
+                                <h3 class="text-2xl font-bold text-gray-800" id="dash-today-sales">Rs. 0</h3>
+                            </div>
+                            <div class="glass-card p-5 border-l-4 border-green-500">
+                                <p class="text-sm font-medium text-gray-500 mb-1">Cash Collected Today</p>
+                                <h3 class="text-2xl font-bold text-gray-800" id="dash-cash-collected">Rs. 0</h3>
+                            </div>
+                            <div class="glass-card p-5 border-l-4 border-red-500">
+                                <p class="text-sm font-medium text-gray-500 mb-1">Pending Payments</p>
+                                <h3 class="text-2xl font-bold text-red-600" id="dash-pending-payments">Rs. 0</h3>
+                            </div>
+                            <div class="glass-card p-5 border-l-4 border-amber-500">
+                                <p class="text-sm font-medium text-gray-500 mb-1">Orders Ready for Collection</p>
+                                <h3 class="text-2xl font-bold text-amber-600" id="dash-ready-orders">0</h3>
+                            </div>
+                        </div>
+
+                        <!-- Target & Charts Row -->
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                            <!-- Target Card -->
+                            <div class="glass-card p-6 flex flex-col justify-between">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Daily Sales Target</h3>
+                                <div class="space-y-4">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-500 text-sm">Target</span>
+                                        <span class="font-bold" id="dash-target">Rs. 0</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-500 text-sm">Actual Sales</span>
+                                        <span class="font-bold text-cambridge" id="dash-actual">Rs. 0</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                        <div class="bg-cambridge h-2.5 rounded-full" id="dash-progress-bar" style="width: 0%"></div>
+                                    </div>
+                                    <div class="flex justify-between items-center pt-2 border-t">
+                                        <span class="text-gray-500 text-sm font-medium" id="dash-gap-label">Sales Gap</span>
+                                        <span class="font-bold text-red-500" id="dash-gap">Rs. 0</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Chart: Sales 7 Days -->
+                            <div class="glass-card p-6 lg:col-span-2">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Sales (Last 7 Days)</h3>
+                                <canvas id="chartSales7Days" height="80"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Lower Charts Row -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="glass-card p-6">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Sales by Category</h3>
+                                <canvas id="chartCategory" height="150"></canvas>
+                            </div>
+                            <div class="glass-card p-6">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Employee Performance (Sales count)</h3>
+                                <canvas id="chartEmployee" height="150"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. CUSTOMERS -->
+                    <div id="sec-customers" class="app-section hidden">
+                        <div class="glass-card p-6">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-lg font-semibold">Customer Directory</h3>
+                                <div class="flex gap-3">
+                                    <input type="text" id="search-customer" placeholder="Search by name, phone..." class="input-field w-64" onkeyup="renderCustomers()">
+                                    <button onclick="openModal('customerModal')" class="btn-primary"><i class="fas fa-plus mr-2"></i>Add Customer</button>
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-gray-50 text-gray-600 text-sm uppercase tracking-wider">
+                                            <th class="p-3 border-b">ID</th>
+                                            <th class="p-3 border-b">Name</th>
+                                            <th class="p-3 border-b">Phone</th>
+                                            <th class="p-3 border-b">Balance</th>
+                                            <th class="p-3 border-b">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="table-customers" class="text-sm divide-y divide-gray-100"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. PRESCRIPTIONS -->
+                    <div id="sec-prescriptions" class="app-section hidden">
+                        <div class="glass-card p-6 max-w-4xl mx-auto">
+                            <h3 class="text-lg font-semibold mb-6 border-b pb-2">New Prescription</h3>
+                            <form id="form-rx" onsubmit="saveRx(event)">
+                                <div class="grid grid-cols-2 gap-6 mb-6">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Customer</label>
+                                        <select id="rx-customer" class="input-field" required></select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Examined By</label>
+                                        <input type="text" id="rx-examiner" class="input-field" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Examination Date</label>
+                                        <input type="date" id="rx-date" class="input-field" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Order Type</label>
+                                        <select id="rx-type" class="input-field">
+                                            <option>New Glasses</option><option>Lens Replacement</option><option>Contact Lenses</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Eye Grid -->
+                                <div class="mb-8 border border-gray-200 rounded-lg overflow-hidden">
+                                    <div class="rx-grid bg-gray-50 p-3 border-b border-gray-200">
+                                        <div class="rx-header">EYE</div><div class="rx-header">SPH</div><div class="rx-header">CYL</div><div class="rx-header">AXIS</div><div class="rx-header">ADD</div><div class="rx-header">PD</div>
+                                    </div>
+                                    <div class="rx-grid p-3 border-b border-gray-100">
+                                        <div class="font-semibold text-gray-700 text-sm">RIGHT (OD)</div>
+                                        <div><input type="text" id="rx-r-sph" class="input-field text-center"></div>
+                                        <div><input type="text" id="rx-r-cyl" class="input-field text-center"></div>
+                                        <div><input type="text" id="rx-r-axis" class="input-field text-center"></div>
+                                        <div><input type="text" id="rx-r-add" class="input-field text-center"></div>
+                                        <div><input type="text" id="rx-r-pd" class="input-field text-center"></div>
+                                    </div>
+                                    <div class="rx-grid p-3">
+                                        <div class="font-semibold text-gray-700 text-sm">LEFT (OS)</div>
+                                        <div><input type="text" id="rx-l-sph" class="input-field text-center"></div>
+                                        <div><input type="text" id="rx-l-cyl" class="input-field text-center"></div>
+                                        <div><input type="text" id="rx-l-axis" class="input-field text-center"></div>
+                                        <div><input type="text" id="rx-l-add" class="input-field text-center"></div>
+                                        <div><input type="text" id="rx-l-pd" class="input-field text-center"></div>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-6 mb-6">
+                                    <div><label class="block text-sm font-medium mb-1">Frame Type</label><input type="text" id="rx-frame" class="input-field"></div>
+                                    <div><label class="block text-sm font-medium mb-1">Lens Type</label><input type="text" id="rx-lens" class="input-field"></div>
+                                    <div class="col-span-2"><label class="block text-sm font-medium mb-1">Remarks</label><input type="text" id="rx-remarks" class="input-field"></div>
+                                </div>
+
+                                <div class="flex justify-end gap-3">
+                                    <button type="button" class="btn-outline" onclick="document.getElementById('form-rx').reset()">Clear</button>
+                                    <button type="submit" class="btn-primary">Save Prescription</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- 4. OPTICAL ORDERS -->
+                    <div id="sec-orders" class="app-section hidden">
+                        <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                            <!-- Orders List -->
+                            <div class="glass-card p-6 xl:col-span-2">
+                                <div class="flex justify-between items-center mb-6">
+                                    <h3 class="text-lg font-semibold">Order Management</h3>
+                                    <input type="text" id="search-order" placeholder="Search orders..." class="input-field w-64" onkeyup="renderOrders()">
+                                </div>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left border-collapse">
+                                        <thead>
+                                            <tr class="bg-gray-50 text-sm uppercase tracking-wider text-gray-600">
+                                                <th class="p-3 border-b">Order No</th>
+                                                <th class="p-3 border-b">Customer</th>
+                                                <th class="p-3 border-b">Expected</th>
+                                                <th class="p-3 border-b">Status</th>
+                                                <th class="p-3 border-b">Balance</th>
+                                                <th class="p-3 border-b">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="table-orders" class="text-sm divide-y divide-gray-100"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- New Order Form -->
+                            <div class="glass-card p-6 bg-gray-50">
+                                <h3 class="text-lg font-semibold mb-4 border-b pb-2">Create / Edit Order</h3>
+                                <form id="form-order" onsubmit="saveOrder(event)">
+                                    <input type="hidden" id="ord-id">
+                                    <div class="space-y-4">
+                                        <div><label class="text-sm font-medium">Customer</label><select id="ord-customer" class="input-field mt-1" required></select></div>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div><label class="text-sm font-medium">Delivery Date</label><input type="date" id="ord-delivery" class="input-field mt-1" required></div>
+                                            <div>
+                                                <label class="text-sm font-medium">Status</label>
+                                                <select id="ord-status" class="input-field mt-1">
+                                                    <option>New</option><option>In Progress</option><option>Awaiting Lenses</option><option>Ready for Collection</option><option>Delivered</option><option>Cancelled</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="border-t pt-4 mt-2">
+                                            <h4 class="text-sm font-bold text-gray-700 mb-3">Price Breakdown</h4>
+                                            <div class="space-y-2">
+                                                <div class="flex justify-between items-center">
+                                                    <span class="text-sm">Frame Cost</span>
+                                                    <input type="number" id="ord-frame-cost" class="input-field w-32 text-right calc-order" value="0" min="0">
+                                                </div>
+                                                <div class="flex justify-between items-center">
+                                                    <span class="text-sm">Lens Cost</span>
+                                                    <input type="number" id="ord-lens-cost" class="input-field w-32 text-right calc-order" value="0" min="0">
+                                                </div>
+                                                <div class="flex justify-between items-center">
+                                                    <span class="text-sm">Discount</span>
+                                                    <input type="number" id="ord-discount" class="input-field w-32 text-right calc-order text-red-500" value="0" min="0">
+                                                </div>
+                                                <div class="flex justify-between items-center font-bold border-t border-b py-2 my-2">
+                                                    <span>Total</span>
+                                                    <span id="ord-total">Rs. 0</span>
+                                                </div>
+                                                <div class="flex justify-between items-center">
+                                                    <span class="text-sm text-green-600 font-medium">Advance / Paid</span>
+                                                    <input type="number" id="ord-advance" class="input-field w-32 text-right calc-order border-green-300" value="0" min="0">
+                                                </div>
+                                                <div class="flex justify-between items-center font-bold text-red-600 bg-red-50 p-2 rounded mt-2">
+                                                    <span>Balance</span>
+                                                    <span id="ord-balance">Rs. 0</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn-primary w-full mt-4">Save Order</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. SALES / POS -->
+                    <div id="sec-pos" class="app-section hidden">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <!-- Product Selection & Cart -->
+                            <div class="glass-card p-6 lg:col-span-2">
+                                <div class="flex gap-4 mb-6">
+                                    <div class="flex-1">
+                                        <label class="text-sm font-medium">Customer</label>
+                                        <select id="pos-customer" class="input-field mt-1"></select>
+                                    </div>
+                                    <div class="flex-1">
+                                        <label class="text-sm font-medium">Add Product from Inventory</label>
+                                        <select id="pos-product" class="input-field mt-1" onchange="addPosItem(this.value)">
+                                            <option value="">-- Select Product --</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <table class="w-full text-left border-collapse border border-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr class="text-sm text-gray-600">
+                                            <th class="p-3 border-b">Product</th>
+                                            <th class="p-3 border-b text-center w-24">Qty</th>
+                                            <th class="p-3 border-b text-right w-32">Price (Rs)</th>
+                                            <th class="p-3 border-b text-right w-32">Total</th>
+                                            <th class="p-3 border-b w-12"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pos-cart" class="divide-y divide-gray-100">
+                                        <!-- Items injected by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Checkout Panel -->
+                            <div class="glass-card p-6 bg-[#f8fafc]">
+                                <h3 class="text-lg font-semibold mb-4 border-b pb-2">Checkout Summary</h3>
+                                <div class="space-y-4 text-sm">
+                                    <div class="flex justify-between"><span class="text-gray-500">Subtotal</span><span class="font-semibold" id="pos-subtotal">0</span></div>
+                                    <div class="flex justify-between items-center"><span class="text-gray-500">Discount (Rs)</span><input type="number" id="pos-discount" class="input-field w-24 text-right py-1" value="0" min="0" oninput="calcPos()"></div>
+                                    <div class="flex justify-between text-lg font-bold border-t pt-3"><span class="text-gray-800">Total</span><span class="text-cambridge" id="pos-total">0</span></div>
+                                    
+                                    <div class="mt-6 pt-4 border-t">
+                                        <label class="block text-sm font-medium mb-1">Amount Received</label>
+                                        <input type="number" id="pos-received" class="input-field text-xl font-bold text-green-700 bg-green-50 border-green-300" value="0" min="0" oninput="calcPos()">
+                                    </div>
+                                    <div class="flex justify-between items-center font-bold text-red-600 bg-red-50 p-3 rounded" id="pos-balance-container">
+                                        <span>Outstanding Balance</span>
+                                        <span id="pos-balance">0</span>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">Payment Method</label>
+                                        <select id="pos-method" class="input-field">
+                                            <option>Cash</option><option>Card</option><option>Bank Transfer</option><option>Digital Wallet</option>
+                                        </select>
+                                    </div>
+
+                                    <button onclick="processSale()" class="btn-primary w-full py-3 text-lg mt-4 bg-green-600 hover:bg-green-700 border-none shadow-md">Complete Sale & Print</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. INVENTORY -->
+                    <div id="sec-inventory" class="app-section hidden">
+                        <div class="glass-card p-6">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-lg font-semibold">Inventory Management</h3>
+                                <div class="flex gap-3">
+                                    <input type="text" id="search-inv" placeholder="Search products..." class="input-field w-64" onkeyup="renderInventory()">
+                                    <button onclick="openModal('inventoryModal')" class="btn-primary"><i class="fas fa-box-open mr-2"></i>Add Product</button>
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-gray-50 text-sm uppercase tracking-wider text-gray-600">
+                                            <th class="p-3 border-b">ID</th>
+                                            <th class="p-3 border-b">Product Name</th>
+                                            <th class="p-3 border-b">Category</th>
+                                            <th class="p-3 border-b">Price</th>
+                                            <th class="p-3 border-b">Stock</th>
+                                            <th class="p-3 border-b">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="table-inventory" class="text-sm divide-y divide-gray-100"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 7. SUPPLIERS (Placeholder) -->
+                    <div id="sec-suppliers" class="app-section hidden">
+                        <div class="glass-card p-6 text-center text-gray-500 py-20">
+                            <i class="fas fa-truck text-5xl mb-4 text-gray-300"></i>
+                            <h2 class="text-xl font-semibold">Supplier Management</h2>
+                            <p class="mt-2">Module available in full version.</p>
+                        </div>
+                    </div>
+
+                    <!-- 8. EXPENSES -->
+                    <div id="sec-expenses" class="app-section hidden">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="glass-card p-6">
+                                <h3 class="text-lg font-semibold mb-4 border-b pb-2">Record Expense</h3>
+                                <form id="form-expense" onsubmit="saveExpense(event)">
+                                    <div class="space-y-4">
+                                        <div><label class="text-sm font-medium">Date</label><input type="date" id="exp-date" class="input-field" required></div>
+                                        <div>
+                                            <label class="text-sm font-medium">Category</label>
+                                            <select id="exp-category" class="input-field">
+                                                <option>Rent</option><option>Salaries</option><option>Electricity</option><option>Internet</option><option>Transport</option><option>Shop Supplies</option><option>Repairs</option><option>Other</option>
+                                            </select>
+                                        </div>
+                                        <div><label class="text-sm font-medium">Description</label><input type="text" id="exp-desc" class="input-field" required></div>
+                                        <div><label class="text-sm font-medium">Amount (Rs)</label><input type="number" id="exp-amount" class="input-field" required min="1"></div>
+                                        <div>
+                                            <label class="text-sm font-medium">Payment Method</label>
+                                            <select id="exp-method" class="input-field"><option>Cash</option><option>Bank</option></select>
+                                        </div>
+                                        <button type="submit" class="btn-danger w-full mt-2"><i class="fas fa-minus-circle mr-2"></i>Add Expense</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="glass-card p-6 md:col-span-2">
+                                <h3 class="text-lg font-semibold mb-4">Recent Expenses</h3>
+                                <div class="overflow-y-auto max-h-96">
+                                    <table class="w-full text-left border-collapse">
+                                        <thead class="bg-gray-50"><tr class="text-sm text-gray-600"><th class="p-2 border-b">Date</th><th class="p-2 border-b">Category</th><th class="p-2 border-b">Description</th><th class="p-2 border-b text-right">Amount</th></tr></thead>
+                                        <tbody id="table-expenses" class="text-sm divide-y"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 9. CASH REGISTER -->
+                    <div id="sec-cash" class="app-section hidden">
+                        <div class="glass-card p-8 max-w-2xl mx-auto">
+                            <h3 class="text-2xl font-bold mb-6 text-center text-navy border-b pb-4">Daily Cash Reconciliation</h3>
+                            
+                            <div class="space-y-3 text-lg">
+                                <div class="flex justify-between items-center"><span class="text-gray-600">Opening Cash</span><input type="number" id="cash-opening" class="input-field w-32 text-right" value="5000" oninput="calcCash()"></div>
+                                <div class="flex justify-between items-center"><span class="text-gray-600">+ Cash Sales & Payments</span><span id="cash-in" class="font-semibold text-green-600">0</span></div>
+                                <div class="flex justify-between items-center"><span class="text-gray-600">- Cash Expenses & Refunds</span><span id="cash-out" class="font-semibold text-red-600">0</span></div>
+                                
+                                <div class="flex justify-between items-center pt-4 border-t-2 border-gray-200 font-bold text-xl">
+                                    <span>Expected Closing Cash</span><span id="cash-expected" class="text-blue-700">0</span>
+                                </div>
+                                
+                                <div class="flex justify-between items-center mt-6 pt-6 border-t border-dashed">
+                                    <span class="font-medium">Actual Counted Cash</span>
+                                    <input type="number" id="cash-actual" class="input-field w-40 text-right text-xl font-bold border-2 border-gray-400" value="0" oninput="calcCash()">
+                                </div>
+                                
+                                <div id="cash-diff-container" class="mt-4 p-4 rounded-lg text-center font-bold text-xl bg-gray-100">
+                                    Difference: <span id="cash-diff">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 10. SALES REPORTS -->
+                    <div id="sec-reports" class="app-section hidden">
+                        <div class="glass-card p-6">
+                            <h3 class="text-lg font-semibold mb-6">Financial Overview (All Time)</h3>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                                <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                                    <div class="text-sm text-blue-800 font-medium">Gross Sales</div>
+                                    <div class="text-xl font-bold" id="rep-gross">0</div>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                    <div class="text-sm text-gray-700 font-medium">Total Discounts</div>
+                                    <div class="text-xl font-bold" id="rep-disc">0</div>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                                    <div class="text-sm text-green-800 font-medium">Net Sales</div>
+                                    <div class="text-xl font-bold" id="rep-net">0</div>
+                                </div>
+                                <div class="bg-red-50 p-4 rounded-lg border border-red-100">
+                                    <div class="text-sm text-red-800 font-medium">Total Outstanding</div>
+                                    <div class="text-xl font-bold" id="rep-out">0</div>
+                                </div>
+                            </div>
+                            <h4 class="font-medium text-gray-700 mb-3 border-b pb-2">Recent Transactions</h4>
+                            <div class="overflow-y-auto max-h-96">
+                                <table class="w-full text-left border-collapse text-sm">
+                                    <thead class="bg-gray-100"><tr class="text-gray-600"><th class="p-2">Receipt</th><th class="p-2">Date</th><th class="p-2">Customer</th><th class="p-2">Method</th><th class="p-2 text-right">Total</th></tr></thead>
+                                    <tbody id="table-reports" class="divide-y"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 11. EMPLOYEE PERFORMANCE -->
+                    <div id="sec-performance" class="app-section hidden">
+                        <div class="glass-card p-6">
+                            <h3 class="text-lg font-semibold mb-4 text-cambridge"><i class="fas fa-star mr-2"></i>Staff Performance Overview</h3>
+                            <p class="text-sm text-gray-500 mb-6">Note: All figures shown are sample demonstration data.</p>
+                            
+                            <table class="w-full text-left border-collapse text-sm">
+                                <thead class="bg-navy text-white">
+                                    <tr>
+                                        <th class="p-3 rounded-tl-lg">Employee Name</th>
+                                        <th class="p-3 text-center">Sales Count</th>
+                                        <th class="p-3 text-right">Total Revenue</th>
+                                        <th class="p-3 text-right rounded-tr-lg">Avg Sale Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    <tr class="hover:bg-gray-50"><td class="p-3 font-medium">Ahmed Khan</td><td class="p-3 text-center">42</td><td class="p-3 text-right">Rs. 245,000</td><td class="p-3 text-right">Rs. 5,833</td></tr>
+                                    <tr class="hover:bg-gray-50"><td class="p-3 font-medium">Zainab Ali</td><td class="p-3 text-center">38</td><td class="p-3 text-right">Rs. 210,500</td><td class="p-3 text-right">Rs. 5,539</td></tr>
+                                    <tr class="hover:bg-gray-50"><td class="p-3 font-medium">Bilal Qureshi</td><td class="p-3 text-center">15</td><td class="p-3 text-right">Rs. 85,000</td><td class="p-3 text-right">Rs. 5,666</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 12. SETTINGS -->
+                    <div id="sec-settings" class="app-section hidden">
+                        <div class="glass-card p-6 max-w-3xl mx-auto">
+                            <h3 class="text-xl font-bold border-b pb-3 mb-6">System Settings</h3>
+                            <form id="form-settings" onsubmit="saveSettings(event)">
+                                <div class="grid grid-cols-2 gap-6 mb-6">
+                                    <div><label class="block text-sm font-medium mb-1">Business Name</label><input type="text" id="set-name" class="input-field" required></div>
+                                    <div><label class="block text-sm font-medium mb-1">Shop Address</label><input type="text" id="set-address" class="input-field" required></div>
+                                    <div><label class="block text-sm font-medium mb-1">Currency Symbol</label><input type="text" id="set-currency" class="input-field" value="Rs." readonly></div>
+                                    <div><label class="block text-sm font-medium mb-1">Daily Sales Target (Rs)</label><input type="number" id="set-target" class="input-field" required></div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-6 mb-6 pt-4 border-t border-gray-100">
+                                    <div><label class="block text-sm font-medium mb-1">Owner Email</label><input type="email" id="set-owner" class="input-field" placeholder="OWNER_EMAIL_HERE"></div>
+                                    <div><label class="block text-sm font-medium mb-1">Manager Email</label><input type="email" id="set-manager" class="input-field" placeholder="MANAGER_EMAIL_HERE"></div>
+                                </div>
+                                <div class="mb-6">
+                                    <label class="block text-sm font-medium mb-1">Receipt Footer Message</label>
+                                    <input type="text" id="set-footer" class="input-field" placeholder="Thank you for your business!">
+                                </div>
+                                <div class="bg-blue-50 text-blue-800 text-sm p-4 rounded-lg mb-6 flex gap-3">
+                                    <i class="fas fa-info-circle mt-0.5"></i>
+                                    <p>Because this version is a frontend-only demonstration, entering an email address does not secure private pages. Real owner/manager authentication and server-side permissions must be implemented in the production version.</p>
+                                </div>
+                                <button type="submit" class="btn-primary w-full">Save Settings</button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+    <!-- Add Customer Modal -->
+    <div id="customerModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+            <h3 class="text-lg font-bold mb-4 border-b pb-2">Add Customer</h3>
+            <form id="form-customer" onsubmit="saveCustomer(event)">
+                <div class="space-y-3">
+                    <div><label class="text-sm font-medium">Full Name</label><input type="text" id="cust-name" class="input-field" required></div>
+                    <div><label class="text-sm font-medium">Phone Number</label><input type="text" id="cust-phone" class="input-field" required></div>
+                    <div><label class="text-sm font-medium">Email</label><input type="email" id="cust-email" class="input-field"></div>
+                    <div><label class="text-sm font-medium">Address</label><input type="text" id="cust-address" class="input-field"></div>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" onclick="closeModal('customerModal')" class="btn-outline">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Customer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Inventory Modal -->
+    <div id="inventoryModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+            <h3 class="text-lg font-bold mb-4 border-b pb-2">Add Product</h3>
+            <form id="form-inventory" onsubmit="saveInventory(event)">
+                <div class="space-y-3 text-sm">
+                    <div><label class="font-medium">Product Name</label><input type="text" id="inv-name" class="input-field" required></div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="font-medium">Category</label>
+                            <select id="inv-cat" class="input-field">
+                                <option>Frames</option><option>Prescription Lenses</option><option>Contact Lenses</option><option>Sunglasses</option><option>Accessories</option><option>Other</option>
+                            </select>
+                        </div>
+                        <div><label class="font-medium">Brand</label><input type="text" id="inv-brand" class="input-field"></div>
+                        <div><label class="font-medium">Purchase Cost</label><input type="number" id="inv-cost" class="input-field" required></div>
+                        <div><label class="font-medium">Selling Price</label><input type="number" id="inv-price" class="input-field" required></div>
+                        <div><label class="font-medium">Stock Qty</label><input type="number" id="inv-qty" class="input-field" required></div>
+                        <div><label class="font-medium">Min Level</label><input type="number" id="inv-min" class="input-field" value="5"></div>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" onclick="closeModal('inventoryModal')" class="btn-outline">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- APPLICATION LOGIC (JavaScript) -->
+    <script>
+        // --- 1. STATE & DATA MANAGEMENT ---
+        const DEMO_DATA = {
+            settings: { name: 'CAMBRIDGE OPTICIANS', address: 'Shakeel Plaza, Peshawar', target: 20000, footer: 'Thank you for choosing Cambridge Opticians!', owner: '', manager: '' },
+            customers: [
+                { id: 'C-1001', name: 'Ali Raza', phone: '0300-1234567', email: 'ali@email.com', address: 'University Road, Peshawar', balance: 0, date: '2023-10-01' },
+                { id: 'C-1002', name: 'Sara Khan', phone: '0333-7654321', email: '', address: 'Hayatabad, Peshawar', balance: 2500, date: '2023-10-15' }
+            ],
+            inventory: [
+                { id: 'P-001', name: 'Ray-Ban Aviator', category: 'Frames', brand: 'Ray-Ban', cost: 4000, price: 8500, stock: 12, min: 5 },
+                { id: 'P-002', name: 'CR-39 Single Vision', category: 'Prescription Lenses', brand: 'Generic', cost: 800, price: 2000, stock: 4, min: 10 },
+                { id: 'P-003', name: 'Acuvue Oasys', category: 'Contact Lenses', brand: 'Johnson', cost: 2500, price: 3500, stock: 20, min: 10 }
+            ],
+            orders: [
+                { id: 'O-100', customer: 'Ali Raza', date: new Date().toISOString().split('T')[0], status: 'Ready for Collection', total: 10500, advance: 5000, balance: 5500 }
+            ],
+            sales: [
+                { id: 'R-5001', date: new Date().toISOString().split('T')[0], customer: 'Sara Khan', total: 4500, method: 'Cash' }
+            ],
+            expenses: []
+        };
+
+        function initData() {
+            if (!localStorage.getItem('cambridge_setup')) {
+                localStorage.setItem('cambridge_settings', JSON.stringify(DEMO_DATA.settings));
+                localStorage.setItem('cambridge_customers', JSON.stringify(DEMO_DATA.customers));
+                localStorage.setItem('cambridge_inventory', JSON.stringify(DEMO_DATA.inventory));
+                localStorage.setItem('cambridge_orders', JSON.stringify(DEMO_DATA.orders));
+                localStorage.setItem('cambridge_sales', JSON.stringify(DEMO_DATA.sales));
+                localStorage.setItem('cambridge_expenses', JSON.stringify(DEMO_DATA.expenses));
+                localStorage.setItem('cambridge_setup', 'true');
+            }
+        }
+
+        function getData(key) { return JSON.parse(localStorage.getItem('cambridge_' + key)) || []; }
+        function saveData(key, data) { localStorage.setItem('cambridge_' + key, JSON.stringify(data)); }
+        
+        function resetDemoData() {
+            if(confirm('Are you sure you want to reset all demo data? This will erase local storage.')){
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        // --- 2. UI NAVIGATION & INIT ---
+        const sectionTitles = { dashboard: 'Dashboard', customers: 'Customer Management', prescriptions: 'Prescriptions', orders: 'Optical Orders', pos: 'Point of Sale', inventory: 'Inventory', suppliers: 'Suppliers', expenses: 'Expenses', cash: 'Cash Register', reports: 'Sales Reports', performance: 'Employee Performance', settings: 'Settings' };
+
+        function showSection(sectionId, navElement = null) {
+            document.querySelectorAll('.app-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById('sec-' + sectionId).classList.remove('hidden');
+            document.getElementById('page-title').innerText = sectionTitles[sectionId];
             
-            <div class="product-grid" id="product-grid">
+            if (navElement) {
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active', 'border-l', 'border-blue-500'));
+                navElement.classList.add('active', 'border-l', 'border-blue-500');
+            }
+
+            // Refresh specific section data
+            if(sectionId === 'dashboard') updateDashboard();
+            if(sectionId === 'customers') renderCustomers();
+            if(sectionId === 'orders') renderOrders();
+            if(sectionId === 'inventory') renderInventory();
+            if(sectionId === 'expenses') renderExpenses();
+            if(sectionId === 'cash') initCashRegister();
+            if(sectionId === 'reports') renderReports();
+            if(sectionId === 'pos') initPos();
+            if(sectionId === 'settings') loadSettings();
+            if(sectionId === 'prescriptions' || sectionId === 'orders' || sectionId === 'pos') populateCustomerDropdowns();
+        }
+
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        
+        function updateDateTime() {
+            const now = new Date();
+            document.getElementById('current-datetime').innerText = now.toLocaleString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        }
+        setInterval(updateDateTime, 60000);
+
+        // --- 3. DASHBOARD LOGIC ---
+        let charts = {};
+        function updateDashboard() {
+            const sales = getData('sales');
+            const orders = getData('orders');
+            const settings = getData('settings');
+            const today = new Date().toISOString().split('T')[0];
+            
+            // Calc stats
+            const todaySales = sales.filter(s => s.date === today);
+            const todayTotal = todaySales.reduce((sum, s) => sum + s.total, 0);
+            const cashTotal = todaySales.filter(s => s.method === 'Cash').reduce((sum, s) => sum + s.total, 0);
+            
+            const pendingPayments = orders.reduce((sum, o) => sum + Number(o.balance), 0);
+            const readyOrders = orders.filter(o => o.status === 'Ready for Collection').length;
+
+            document.getElementById('dash-today-sales').innerText = `Rs. ${todayTotal.toLocaleString()}`;
+            document.getElementById('dash-cash-collected').innerText = `Rs. ${cashTotal.toLocaleString()}`;
+            document.getElementById('dash-pending-payments').innerText = `Rs. ${pendingPayments.toLocaleString()}`;
+            document.getElementById('dash-ready-orders').innerText = readyOrders;
+
+            // Target
+            const target = Number(settings.target) || 20000;
+            document.getElementById('dash-target').innerText = `Rs. ${target.toLocaleString()}`;
+            document.getElementById('dash-actual').innerText = `Rs. ${todayTotal.toLocaleString()}`;
+            
+            let percent = (todayTotal / target) * 100;
+            if(percent > 100) percent = 100;
+            document.getElementById('dash-progress-bar').style.width = percent + '%';
+            
+            const gap = target - todayTotal;
+            if(gap > 0) {
+                document.getElementById('dash-gap-label').innerText = 'Sales Gap';
+                document.getElementById('dash-gap').innerText = `Rs. ${gap.toLocaleString()}`;
+                document.getElementById('dash-gap').className = 'font-bold text-red-500';
+            } else {
+                document.getElementById('dash-gap-label').innerText = 'Target Exceeded by';
+                document.getElementById('dash-gap').innerText = `Rs. ${Math.abs(gap).toLocaleString()}`;
+                document.getElementById('dash-gap').className = 'font-bold text-green-500';
+            }
+
+            initCharts();
+        }
+
+        function initCharts() {
+            if(charts.sales) charts.sales.destroy();
+            if(charts.cat) charts.cat.destroy();
+            if(charts.emp) charts.emp.destroy();
+
+            const ctx1 = document.getElementById('chartSales7Days').getContext('2d');
+            charts.sales = new Chart(ctx1, { type: 'line', data: { labels: ['Day 1','Day 2','Day 3','Day 4','Day 5','Day 6','Today'], datasets: [{ label: 'Sales (Rs)', data: [12000, 19000, 15000, 22000, 18000, 14000, 21000], borderColor: '#1E3A8A', backgroundColor: 'rgba(30, 58, 138, 0.1)', fill: true, tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: {display: false} } }});
+
+            const ctx2 = document.getElementById('chartCategory').getContext('2d');
+            charts.cat = new Chart(ctx2, { type: 'doughnut', data: { labels: ['Frames', 'Lenses', 'Contact Lenses', 'Sunglasses'], datasets: [{ data: [45, 30, 15, 10], backgroundColor: ['#1E3A8A', '#3B82F6', '#93C5FD', '#1F2937'] }] }, options: { responsive: true, maintainAspectRatio: false }});
+
+            const ctx3 = document.getElementById('chartEmployee').getContext('2d');
+            charts.emp = new Chart(ctx3, { type: 'bar', data: { labels: ['Ahmed', 'Zainab', 'Bilal'], datasets: [{ label: 'Sales Count', data: [42, 38, 15], backgroundColor: '#3B82F6' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: {display: false} } }});
+        }
+
+        // --- 4. CUSTOMERS ---
+        function renderCustomers() {
+            const query = document.getElementById('search-customer').value.toLowerCase();
+            const table = document.getElementById('table-customers');
+            const data = getData('customers').filter(c => c.name.toLowerCase().includes(query) || c.phone.includes(query));
+            
+            table.innerHTML = data.map(c => `
+                <tr class="hover:bg-gray-50">
+                    <td class="p-3 font-medium text-gray-900">${c.id}</td>
+                    <td class="p-3">${c.name}</td>
+                    <td class="p-3">${c.phone}</td>
+                    <td class="p-3 font-semibold ${c.balance > 0 ? 'text-red-500' : 'text-green-500'}">Rs. ${c.balance}</td>
+                    <td class="p-3">
+                        <button class="text-blue-600 hover:text-blue-800 text-sm"><i class="fas fa-eye"></i> View</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function saveCustomer(e) {
+            e.preventDefault();
+            const customers = getData('customers');
+            const newCust = {
+                id: 'C-' + (1000 + customers.length + 1),
+                name: document.getElementById('cust-name').value,
+                phone: document.getElementById('cust-phone').value,
+                email: document.getElementById('cust-email').value,
+                address: document.getElementById('cust-address').value,
+                balance: 0, date: new Date().toISOString().split('T')[0]
+            };
+            customers.push(newCust);
+            saveData('customers', customers);
+            closeModal('customerModal');
+            document.getElementById('form-customer').reset();
+            renderCustomers();
+            populateCustomerDropdowns();
+            alert('Customer saved successfully!');
+        }
+
+        function populateCustomerDropdowns() {
+            const opts = `<option value="">-- Select Customer --</option>` + getData('customers').map(c => `<option value="${c.name}">${c.name} (${c.phone})</option>`).join('');
+            if(document.getElementById('rx-customer')) document.getElementById('rx-customer').innerHTML = opts;
+            if(document.getElementById('ord-customer')) document.getElementById('ord-customer').innerHTML = opts;
+            if(document.getElementById('pos-customer')) document.getElementById('pos-customer').innerHTML = opts;
+        }
+
+        // --- 5. ORDERS & PRESCRIPTIONS ---
+        document.querySelectorAll('.calc-order').forEach(el => el.addEventListener('input', calcOrder));
+        
+        function calcOrder() {
+            const f = Number(document.getElementById('ord-frame-cost').value) || 0;
+            const l = Number(document.getElementById('ord-lens-cost').value) || 0;
+            const d = Number(document.getElementById('ord-discount').value) || 0;
+            const adv = Number(document.getElementById('ord-advance').value) || 0;
+            
+            const total = (f + l) - d;
+            const bal = total - adv;
+            
+            document.getElementById('ord-total').innerText = `Rs. ${total}`;
+            document.getElementById('ord-balance').innerText = `Rs. ${bal}`;
+        }
+
+        function renderOrders() {
+            const query = document.getElementById('search-order').value.toLowerCase();
+            const table = document.getElementById('table-orders');
+            const data = getData('orders').filter(o => o.customer.toLowerCase().includes(query) || o.id.toLowerCase().includes(query));
+            
+            table.innerHTML = data.map(o => {
+                let sClass = 'bg-gray-100 text-gray-800';
+                if(o.status === 'Ready for Collection') sClass = 'bg-amber-100 text-amber-800';
+                if(o.status === 'Delivered') sClass = 'bg-green-100 text-green-800';
+                
+                return `
+                <tr class="hover:bg-gray-50 border-b">
+                    <td class="p-3 font-medium">${o.id}</td>
+                    <td class="p-3">${o.customer}</td>
+                    <td class="p-3 text-gray-500">${o.date}</td>
+                    <td class="p-3"><span class="px-2 py-1 rounded text-xs font-semibold ${sClass}">${o.status}</span></td>
+                    <td class="p-3 font-semibold ${o.balance > 0 ? 'text-red-500' : 'text-gray-500'}">Rs. ${o.balance}</td>
+                    <td class="p-3"><button onclick="printOrder('${o.id}')" class="text-blue-600"><i class="fas fa-print"></i></button></td>
+                </tr>
+            `}).join('');
+        }
+
+        function saveOrder(e) {
+            e.preventDefault();
+            const orders = getData('orders');
+            const totalStr = document.getElementById('ord-total').innerText.replace('Rs. ', '');
+            const balStr = document.getElementById('ord-balance').innerText.replace('Rs. ', '');
+            
+            const o = {
+                id: 'O-' + (100 + orders.length + 1),
+                customer: document.getElementById('ord-customer').value,
+                date: document.getElementById('ord-delivery').value,
+                status: document.getElementById('ord-status').value,
+                total: Number(totalStr), advance: Number(document.getElementById('ord-advance').value), balance: Number(balStr)
+            };
+            orders.push(o);
+            saveData('orders', orders);
+            document.getElementById('form-order').reset();
+            calcOrder();
+            renderOrders();
+            alert('Order Created!');
+        }
+
+        function saveRx(e) {
+            e.preventDefault();
+            alert('Prescription saved successfully! (Demo Mode)');
+            document.getElementById('form-rx').reset();
+        }
+
+        // --- 6. POS & CART ---
+        let cart = [];
+        
+        function initPos() {
+            const inv = getData('inventory');
+            document.getElementById('pos-product').innerHTML = `<option value="">-- Select Product --</option>` + 
+                inv.filter(i => i.stock > 0).map(i => `<option value="${i.id}">${i.name} - Rs. ${i.price} (In Stock:${i.stock})</option>`).join('');
+            renderCart();
+        }
+
+        function addPosItem(id) {
+            if(!id) return;
+            const inv = getData('inventory');
+            const prod = inv.find(i => i.id === id);
+            if(!prod) return;
+            
+            const existing = cart.find(c => c.id === id);
+            if(existing) existing.qty++;
+            else cart.push({...prod, qty: 1});
+            
+            document.getElementById('pos-product').value = '';
+            renderCart();
+        }
+        
+        function removeCartItem(index) { cart.splice(index, 1); renderCart(); }
+
+        function renderCart() {
+            const tbody = document.getElementById('pos-cart');
+            tbody.innerHTML = cart.map((c, i) => `
+                <tr>
+                    <td class="p-3">${c.name}</td>
+                    <td class="p-3 text-center">${c.qty}</td>
+                    <td class="p-3 text-right">${c.price}</td>
+                    <td class="p-3 text-right font-semibold">${c.price * c.qty}</td>
+                    <td class="p-3 text-center"><button onclick="removeCartItem(${i})" class="text-red-500"><i class="fas fa-times"></i></button></td>
+                </tr>
+            `).join('');
+            calcPos();
+        }
+
+        function calcPos() {
+            const sub = cart.reduce((sum, c) => sum + (c.price * c.qty), 0);
+            const disc = Number(document.getElementById('pos-discount').value) || 0;
+            const total = sub - disc;
+            const rec = Number(document.getElementById('pos-received').value) || 0;
+            const bal = total - rec;
+
+            document.getElementById('pos-subtotal').innerText = sub;
+            document.getElementById('pos-total').innerText = total;
+            
+            const balEl = document.getElementById('pos-balance');
+            const balCont = document.getElementById('pos-balance-container');
+            
+            if(bal > 0) {
+                balCont.className = 'flex justify-between items-center font-bold text-red-600 bg-red-50 p-3 rounded mt-4 border border-red-200';
+                balCont.children[0].innerText = 'Outstanding Balance';
+                balEl.innerText = bal;
+            } else if (bal < 0) {
+                balCont.className = 'flex justify-between items-center font-bold text-blue-600 bg-blue-50 p-3 rounded mt-4 border border-blue-200';
+                balCont.children[0].innerText = 'Change Due';
+                balEl.innerText = Math.abs(bal);
+            } else {
+                balCont.className = 'flex justify-between items-center font-bold text-green-600 bg-green-50 p-3 rounded mt-4 border border-green-200';
+                balCont.children[0].innerText = 'Fully Paid';
+                balEl.innerText = 0;
+            }
+        }
+
+        function processSale() {
+            if(cart.length === 0) return alert('Cart is empty!');
+            const cust = document.getElementById('pos-customer').value || 'Walk-in Customer';
+            const total = Number(document.getElementById('pos-total').innerText);
+            const method = document.getElementById('pos-method').value;
+            
+            // Update Inventory
+            const inv = getData('inventory');
+            cart.forEach(c => {
+                const item = inv.find(i => i.id === c.id);
+                if(item) item.stock -= c.qty;
+            });
+            saveData('inventory', inv);
+            
+            // Save Sale
+            const sales = getData('sales');
+            const rId = 'R-' + (5000 + sales.length + 1);
+            sales.push({ id: rId, date: new Date().toISOString().split('T')[0], customer: cust, total: total, method: method, cart: cart });
+            saveData('sales', sales);
+
+            // Print & Reset
+            printReceipt(rId, cart, total, cust, method);
+            cart = []; renderCart(); 
+            document.getElementById('pos-received').value = 0; 
+            document.getElementById('pos-discount').value = 0;
+            calcPos();
+        }
+
+        // --- 7. INVENTORY ---
+        function renderInventory() {
+            const query = document.getElementById('search-inv').value.toLowerCase();
+            const table = document.getElementById('table-inventory');
+            const data = getData('inventory').filter(i => i.name.toLowerCase().includes(query) || i.id.toLowerCase().includes(query));
+            
+            table.innerHTML = data.map(i => `
+                <tr class="hover:bg-gray-50 border-b">
+                    <td class="p-3 text-xs text-gray-500">${i.id}</td>
+                    <td class="p-3 font-medium">${i.name}<br><span class="text-xs text-gray-400">${i.brand}</span></td>
+                    <td class="p-3 text-gray-600">${i.category}</td>
+                    <td class="p-3">Rs. ${i.price}</td>
+                    <td class="p-3 font-bold ${i.stock <= i.min ? 'text-red-600' : 'text-gray-800'}">${i.stock}</td>
+                    <td class="p-3">${i.stock <= i.min ? '<span class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded">Low Stock</span>' : '<span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">In Stock</span>'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function saveInventory(e) {
+            e.preventDefault();
+            const inv = getData('inventory');
+            inv.push({
+                id: 'P-' + String(inv.length + 1).padStart(3, '0'),
+                name: document.getElementById('inv-name').value,
+                category: document.getElementById('inv-cat').value,
+                brand: document.getElementById('inv-brand').value,
+                cost: Number(document.getElementById('inv-cost').value),
+                price: Number(document.getElementById('inv-price').value),
+                stock: Number(document.getElementById('inv-qty').value),
+                min: Number(document.getElementById('inv-min').value)
+            });
+            saveData('inventory', inv);
+            closeModal('inventoryModal');
+            document.getElementById('form-inventory').reset();
+            renderInventory();
+        }
+
+        // --- 8. EXPENSES ---
+        function renderExpenses() {
+            const exp = getData('expenses');
+            document.getElementById('table-expenses').innerHTML = exp.map(e => `
+                <tr><td class="p-2">${e.date}</td><td class="p-2">${e.cat}</td><td class="p-2 text-gray-500">${e.desc}</td><td class="p-2 text-right font-medium">Rs. ${e.amount}</td></tr>
+            `).join('');
+        }
+        function saveExpense(e) {
+            e.preventDefault();
+            const exp = getData('expenses');
+            exp.unshift({ date: document.getElementById('exp-date').value, cat: document.getElementById('exp-category').value, desc: document.getElementById('exp-desc').value, amount: Number(document.getElementById('exp-amount').value) });
+            saveData('expenses', exp);
+            document.getElementById('form-expense').reset();
+            renderExpenses();
+            alert('Expense recorded!');
+        }
+
+        // --- 9. CASH REGISTER ---
+        function initCashRegister() {
+            const sales = getData('sales');
+            const exp = getData('expenses');
+            const today = new Date().toISOString().split('T')[0];
+            
+            const cashIn = sales.filter(s => s.date === today && s.method === 'Cash').reduce((sum, s) => sum + s.total, 0);
+            const cashOut = exp.filter(e => e.date === today).reduce((sum, e) => sum + e.amount, 0); // Assuming all today exp are cash for demo
+            
+            document.getElementById('cash-in').innerText = cashIn;
+            document.getElementById('cash-out').innerText = cashOut;
+            calcCash();
+        }
+
+        function calcCash() {
+            const open = Number(document.getElementById('cash-opening').value) || 0;
+            const inAmt = Number(document.getElementById('cash-in').innerText) || 0;
+            const outAmt = Number(document.getElementById('cash-out').innerText) || 0;
+            const actual = Number(document.getElementById('cash-actual').value) || 0;
+            
+            const exp = open + inAmt - outAmt;
+            document.getElementById('cash-expected').innerText = exp;
+            
+            const diff = actual - exp;
+            const dEl = document.getElementById('cash-diff');
+            const dCont = document.getElementById('cash-diff-container');
+            
+            if(diff === 0) { dCont.className = 'mt-4 p-4 rounded-lg text-center font-bold text-xl bg-green-100 text-green-800'; dEl.innerText = '0 (Balanced)'; }
+            else if(diff < 0) { dCont.className = 'mt-4 p-4 rounded-lg text-center font-bold text-xl bg-red-100 text-red-800'; dEl.innerText = `Short by Rs. ${Math.abs(diff)}`; }
+            else { dCont.className = 'mt-4 p-4 rounded-lg text-center font-bold text-xl bg-amber-100 text-amber-800'; dEl.innerText = `Over by Rs. ${diff}`; }
+        }
+
+        // --- 10. REPORTS ---
+        function renderReports() {
+            const sales = getData('sales');
+            const orders = getData('orders');
+            
+            const gross = sales.reduce((sum, s) => sum + s.total, 0);
+            const out = orders.reduce((sum, o) => sum + o.balance, 0);
+            
+            document.getElementById('rep-gross').innerText = `Rs. ${gross}`;
+            document.getElementById('rep-net').innerText = `Rs. ${gross}`; // Simplified for demo
+            document.getElementById('rep-out').innerText = `Rs. ${out}`;
+            
+            document.getElementById('table-reports').innerHTML = sales.slice().reverse().map(s => `
+                <tr class="hover:bg-gray-50"><td class="p-2 font-medium">${s.id}</td><td class="p-2 text-gray-500">${s.date}</td><td class="p-2">${s.customer}</td><td class="p-2"><span class="px-2 py-0.5 bg-gray-200 rounded text-xs">${s.method}</span></td><td class="p-2 text-right font-bold text-cambridge">Rs. ${s.total}</td></tr>
+            `).join('');
+        }
+
+        // --- 11. SETTINGS ---
+        function loadSettings() {
+            const set = getData('settings');
+            document.getElementById('set-name').value = set.name;
+            document.getElementById('set-address').value = set.address;
+            document.getElementById('set-target').value = set.target;
+            document.getElementById('set-owner').value = set.owner || '';
+            document.getElementById('set-manager').value = set.manager || '';
+            document.getElementById('set-footer').value = set.footer || '';
+            
+            document.getElementById('sidebar-biz-name').innerHTML = set.name.replace(' ', '<br>');
+            document.getElementById('sidebar-biz-address').innerText = set.address;
+        }
+
+        function saveSettings(e) {
+            e.preventDefault();
+            const set = getData('settings');
+            set.name = document.getElementById('set-name').value;
+            set.address = document.getElementById('set-address').value;
+            set.target = document.getElementById('set-target').value;
+            set.owner = document.getElementById('set-owner').value;
+            set.manager = document.getElementById('set-manager').value;
+            set.footer = document.getElementById('set-footer').value;
+            saveData('settings', set);
+            loadSettings();
+            alert('Settings Saved!');
+        }
+
+        // --- 12. PRINT FUNCTIONS ---
+        function printReceipt(id, cart, total, cust, method) {
+            const set = getData('settings');
+            const date = new Date().toLocaleString();
+            
+            let html = `
+                <div style="font-family: monospace; max-width: 300px; margin: 0 auto; text-align: center;">
+                    <h2 style="margin: 0; font-size: 24px; text-transform: uppercase;">${set.name}</h2>
+                    <p style="margin: 5px 0; font-size: 12px;">${set.address}</p>
+                    <hr style="border-top: 1px dashed black; margin: 10px 0;">
+                    <p style="margin: 5px 0; text-align: left; font-size: 12px;">Receipt: ${id}<br>Date: ${date}<br>Customer:${cust}</p>
+                    <hr style="border-top: 1px dashed black; margin: 10px 0;">
+                    <table style="width: 100%; text-align: left; font-size: 12px;">
+                        <tr><th>Item</th><th style="text-align:center;">Qty</th><th style="text-align:right;">Amt</th></tr>
+            `;
+            cart.forEach(c => {
+                html += `<tr><td>${c.name.substring(0,15)}</td><td style="text-align:center;">${c.qty}</td><td style="text-align:right;">${c.price * c.qty}</td></tr>`;
+            });
+            html += `
+                    </table>
+                    <hr style="border-top: 1px dashed black; margin: 10px 0;">
+                    <p style="margin: 5px 0; text-align: right; font-size: 14px; font-weight: bold;">TOTAL: Rs. ${total}</p>
+                    <p style="margin: 5px 0; text-align: right; font-size: 12px;">Method: ${method}</p>
+                    <hr style="border-top: 1px dashed black; margin: 10px 0;">
+                    <p style="margin: 10px 0; font-size: 12px;">${set.footer || 'Thank you!'}</p>
                 </div>
-        </section>
+            `;
+            triggerPrint(html);
+        }
 
-        <section class="promo-banner section-padding">
-            <div class="promo-content glass">
-                <h2>SKINCARE WEEK</h2>
-                <p>Discover everyday essentials for glowing, healthy skin.</p>
-                <button class="btn btn-primary" onclick="filterByCategory('Skincare')">Shop Essentials</button>
-            </div>
-        </section>
-
-        <section class="trust-section section-padding">
-            <div class="trust-grid">
-                <div class="trust-item">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                    <h4>Secure Checkout</h4>
-                    <p>Safe and encrypted payments</p>
-                </div>
-                <div class="trust-item">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-                    <h4>UAE Delivery</h4>
-                    <p>Fast shipping across all Emirates</p>
-                </div>
-                <div class="trust-item">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                    <h4>Authentic Sourcing</h4>
-                    <p>100% genuine guaranteed</p>
-                </div>
-                <div class="trust-item">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                    <h4>Customer Support</h4>
-                    <p>Here to help with your orders</p>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-col brand-col">
-                <img src="https://via.placeholder.com/150x40/ffffff/0f172a?text=PHARMACOS" alt="Pharmacos Logo Footer" class="footer-logo">
-                <p>Your premium destination for everyday health, skincare, and beauty needs in the United Arab Emirates.</p>
-                <div class="social-links">
-                    <a href="#" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
-                    <a href="#" aria-label="Facebook"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
-                </div>
-            </div>
-            <div class="footer-col">
-                <h3>SHOP</h3>
-                <a href="#shop" onclick="filterByCategory('Skincare')">Skincare</a>
-                <a href="#shop" onclick="filterByCategory('Hair Care')">Hair Care</a>
-                <a href="#shop" onclick="filterByCategory('Personal Care')">Personal Care</a>
-                <a href="#shop" onclick="filterByCategory('Beauty')">Beauty</a>
-                <a href="#shop" onclick="filterByCategory('Mother & Baby')">Baby Care</a>
-            </div>
-            <div class="footer-col">
-                <h3>HELP</h3>
-                <a href="#">Contact Us</a>
-                <a href="#">Delivery Information</a>
-                <a href="#">Returns Policy</a>
-                <a href="#">FAQ</a>
-            </div>
-            <div class="footer-col">
-                <h3>NEWSLETTER</h3>
-                <p>Subscribe for exclusive UAE offers and skincare tips.</p>
-                <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Subscribed successfully!');">
-                    <input type="email" placeholder="Email Address" required>
-                    <button type="submit" class="btn btn-primary">Subscribe</button>
-                </form>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 Pharmacos. All rights reserved. | Demo Site</p>
-        </div>
-    </footer>
-
-    <div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
-    <div class="cart-drawer" id="cart-drawer">
-        <div class="cart-header">
-            <h2>Your Cart</h2>
-            <button class="close-btn" onclick="toggleCart()">&times;</button>
-        </div>
-        <div class="cart-items" id="cart-items">
-            </div>
-        <div class="cart-footer">
-            <div class="cart-subtotal">
-                <span>Subtotal</span>
-                <span id="cart-subtotal-price">AED 0.00</span>
-            </div>
-            <p class="cart-note">Delivery and taxes calculated at checkout.</p>
-            <button class="btn btn-primary w-100" onclick="openCheckout()">Proceed to Checkout</button>
-            <button class="btn btn-secondary w-100 mt-2" onclick="toggleCart()">Continue Shopping</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="qv-overlay" onclick="closeQuickView()"></div>
-    <div class="modal" id="quick-view-modal">
-        <button class="close-btn modal-close" onclick="closeQuickView()">&times;</button>
-        <div class="qv-content" id="qv-content">
-            </div>
-    </div>
-
-    <div class="modal-overlay" id="checkout-overlay" onclick="closeCheckout()"></div>
-    <div class="modal checkout-modal" id="checkout-modal">
-        <button class="close-btn modal-close" onclick="closeCheckout()">&times;</button>
-        <h2>Secure Demo Checkout</h2>
-        <p class="security-notice">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            Secure payment integration available in the production website. This demo uses WhatsApp ordering.
-        </p>
-        <form id="checkout-form" class="checkout-form" onsubmit="submitCheckout(event)">
-            <div class="form-group">
-                <label for="co-name">Full Name</label>
-                <input type="text" id="co-name" required>
-            </div>
-            <div class="form-group">
-                <label for="co-mobile">Mobile Number (UAE)</label>
-                <input type="tel" id="co-mobile" placeholder="+971 5X XXX XXXX" required>
-            </div>
-            <div class="form-group">
-                <label for="co-emirate">Emirate</label>
-                <select id="co-emirate" required>
-                    <option value="">Select Emirate</option>
-                    <option value="Dubai">Dubai</option>
-                    <option value="Abu Dhabi">Abu Dhabi</option>
-                    <option value="Sharjah">Sharjah</option>
-                    <option value="Ajman">Ajman</option>
-                    <option value="Ras Al Khaimah">Ras Al Khaimah</option>
-                    <option value="Fujairah">Fujairah</option>
-                    <option value="Umm Al Quwain">Umm Al Quwain</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="co-area">Area / Neighborhood</label>
-                <input type="text" id="co-area" required>
-            </div>
-            <div class="form-group">
-                <label for="co-address">Delivery Address</label>
-                <textarea id="co-address" rows="2" required></textarea>
-            </div>
-            <div class="checkout-summary">
-                <p>Total Items: <span id="co-items-count">0</span></p>
-                <p class="fw-bold">Total: <span id="co-total-price">AED 0.00</span></p>
-            </div>
-            <button type="submit" class="btn btn-whatsapp w-100">
-                Place Order via WhatsApp
-            </button>
-        </form>
-    </div>
-
-    <div id="toast" class="toast">Product added to cart</div>
-
-    <script src="script.js"></script>
-</body>
-</html>
+        function printOrder(id) {
+            const orders = getData('orders');
+            const o = orders.find(x => x.id === id);
+            const set = getData('settings');
+            
+            let html = `
+                <div style="max-width: 800px; margin: 0 auto; font-family: sans-serif;">
+                    <h1 style="text-align: center; color: #1E3A8A; margin-bottom: 5px;">${set.name}</h1>
+                    <p style="text-align: center; margin-top: 0; color: #555;">${set.address}</p>
+                    <h2 style="text-align: center; border-bottom: 2px solid black; padding-bottom: 10px;">OPTICAL ORDER</h2>
+                    
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                        <div><p><strong>Order No:</strong> ${o.id}</p><p><strong>Customer:</strong>${o.customer}</p></div>
+                        <div style="text-align: right;"><p><strong>Date expected:</strong> ${o.date}</p><p><strong>Status:</strong>${o.status}</p></div>
+                    </div>
+                    
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                        <tr><th style="border: 1px solid #ccc; padding: 10px; text-align: left;">Description</th><th style="border: 1px solid #ccc; padding: 10px; text-align: right;">Amount</th></tr>
+                        <tr><td style="border: 1px solid #ccc; padding: 10px;">Total Bill</td><td style="border: 1px solid #ccc; padding: 10px; text-align: right;">Rs. ${o.total}</td></tr>
+                        <tr><td style="border: 1px solid #ccc; padding: 10px;">Advance Received</td><td style="border: 1px solid #ccc; padding: 10px; text-align: right;">Rs. ${o.advance}</td></tr>
+                        <tr><td style="border: 1px solid #ccc; padding: 10px; font-weight: bold;">Outstanding Balance</td><td style="border: 1px solid #ccc; padding: 10px; text-align: right; font-weight: bold; color: red;">Rs. ${o.balance}</td></tr>
+                    </table>
+                    <p style="text-align: center; margin
